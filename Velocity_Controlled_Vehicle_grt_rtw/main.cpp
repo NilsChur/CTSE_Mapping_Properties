@@ -413,7 +413,7 @@ int nextRise(int state, bool RiseAP){
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+            __vm_ctl_flag(0, _VM_CF_Accepting);
             if(RiseAP) {return 0;}
             if(!RiseAP) {return 1;}
 
@@ -447,7 +447,7 @@ int nextOvershoot(int state, bool OvershootAP){
             return 0; // state is now initilized but not visited
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+            __vm_ctl_flag(0, _VM_CF_Accepting);
             if(!OvershootAP) {return 0;}
             if(OvershootAP) {return 1;}
 
@@ -479,7 +479,7 @@ int nextBounded(int state, bool BoundedAP){
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+            __vm_ctl_flag(0, _VM_CF_Accepting);
             if(BoundedAP) {return 0;}
             if(!BoundedAP) {return 1;}
 
@@ -511,7 +511,7 @@ int nextSettlingTime(int state, bool StableAP){
         return 1;
 
     case 0:
-        __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+        __vm_ctl_flag(0, _VM_CF_Accepting);
         if(StableAP) {return 0;}
         if(!StableAP) {return 1;}
 
