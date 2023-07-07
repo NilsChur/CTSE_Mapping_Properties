@@ -14,14 +14,6 @@ class ObserverState;
 class Observer {
     protected:
 
-        // Test Time with Chrono
-        //std::chrono::time_point<std::chrono::steady_clock> clockStart;
-        //std::chrono::time_point<std::chrono::steady_clock> clockNow;
-
-        /*
-        * Struct that captures if a state was entered (true) or not (false)
-        * These are protected because here it is very important that they are not accidentally changed during runtime!
-        */
         bool restWasEntered;
         bool transientWasEntered;
         bool riseWasEntered;
@@ -30,7 +22,7 @@ class Observer {
 
     public:
         Observer();
-        // Attributes
+
         // Input generated from the system 
         double reference;
         double error;
@@ -44,24 +36,6 @@ class Observer {
         double riseTime;
         double settlingTime;
 
-        // Methods to set and get time values
-        /*
-        * Saves the current time to a time point
-        */
-        //void setCurrentTime();
-
-        /*
-        * Return the current time
-        */
-        //std::chrono::time_point<std::chrono::steady_clock> returnCurrentTime();
-
-        /*
-        * Return the start time point
-        */
-        //std::chrono::time_point<std::chrono::steady_clock> returnStartTime();
-        // void stop_timer(); maybe needed later but not now
-
-        // Methods
         inline ObserverState* getCurrentState() const {return currentState; }
         void transition();
 

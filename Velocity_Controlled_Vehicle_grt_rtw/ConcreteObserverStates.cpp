@@ -37,11 +37,6 @@ ObserverState& Bounded::getInstance() {
     return singleton;
 }
 
-/*
-* The part below covers all possible transitions between the State.
-* The Guard are also implemented, may need still some fine tuning (21.06.2023)
-*/
-
 /* 
 * Possible Transitions from Rest
 */
@@ -52,12 +47,10 @@ void Rest::transition(Observer* observer) {
     // Transition Rest -> Transient 
     if (observer->reference == true && observer->error >= observer->epsilon) { // should transit as soon as a reference is set (/=0), therefore, true.
         observer->setState(Transient::getInstance());
-        //cout << "Next State: Transient" << endl;
     }
     // Selfloop
     else if (observer->error <= observer->epsilon) {
         observer->setState(Rest::getInstance());
-        //cout << "Next State: Rest" << endl;
     }
 }
 
