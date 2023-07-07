@@ -15,11 +15,13 @@ class Observer {
     protected:
 
         // Test Time with Chrono
-        std::chrono::time_point<std::chrono::steady_clock> clockStart;
-        std::chrono::time_point<std::chrono::steady_clock> clockNow;
+        //std::chrono::time_point<std::chrono::steady_clock> clockStart;
+        //std::chrono::time_point<std::chrono::steady_clock> clockNow;
 
-
-        // Booleans that capture if a state was visited or not
+        /*
+        * Struct that captures if a state was entered (true) or not (false)
+        * These are protected because here it is very important that they are not accidentally changed during runtime!
+        */
         bool restWasEntered;
         bool transientWasEntered;
         bool riseWasEntered;
@@ -28,61 +30,67 @@ class Observer {
 
     public:
         Observer();
-
+        // Attributes
+        // Input generated from the system 
         double reference;
         double error;
         double sysOut;
+        double time;
 
-        // Thresholds
+        // Thresholds design decisions
         double epsilon;
         double overshootLevel;
         double riseLevel;
         double riseTime;
         double settlingTime;
 
-
+        // Methods to set and get time values
         /*
         * Saves the current time to a time point
         */
-        void setCurrentTime();
+        //void setCurrentTime();
 
         /*
         * Return the current time
         */
-        std::chrono::time_point<std::chrono::steady_clock> returnCurrentTime();
+        //std::chrono::time_point<std::chrono::steady_clock> returnCurrentTime();
 
         /*
         * Return the start time point
         */
-        std::chrono::time_point<std::chrono::steady_clock> returnStartTime();
+        //std::chrono::time_point<std::chrono::steady_clock> returnStartTime();
+        // void stop_timer(); maybe needed later but not now
 
+        // Methods
         inline ObserverState* getCurrentState() const {return currentState; }
-
-        /*
-        * Function to cast new states
-        */
         void transition();
 
         /*
         *
         * setExternalInput gets the data from the system and save the values in the Observer.
         * These are the reference values to which the guards are compared.
-        * Order: Reference, Error, System Output
+        * Input order is: first, the reference/input of the system
+        * Second, the error, difference between reference and system output
+        * Third, the system output
+        * Forth, time information
         */
-        void setExternalInput(double reference, double error, double sysOut); 
+        void setExternalInput(double reference, double error, double sysOut, double time); 
 
         /*
         * 
         * initalThreshold set the values for the transition guards.
         * The inputs are compared to this values.
-        * Order: steady state error (%), Overhsoot (%), riseLevel (%), rise time (sec), settling time (sec) 
+        * The input order is: first, the accepted steady state error epsilon
+        * Second, the maximum allowed overshoot in %
+        * Third, the rise level in %
+        * Fourth, the time allowed to reach the rise level in sec
+        * And finally, the settling times
+        * 
         */
         void initialThreshold(double epsilon, double overshoot_level, double riseLevel, double riseTime, double settlingTime); // sets Threshold to overshoot
     
 
-        /*
-        * Set new State
-        */
+        // Set new State
         void setState(ObserverState& newstate);
 
         /*

@@ -29,9 +29,6 @@ class Transient : public ObserverState {
         static ObserverState& getInstance();
 
     private:
-
-        std::chrono::duration<double> timeTaken;
-
         Transient() {}
         Transient(const Transient& other);
         Transient& operator=(const Transient& other);
@@ -68,12 +65,8 @@ class Bounded : public ObserverState {
         static ObserverState& getInstance();
 
     private:
-        
-        // "real time" counter
-        std::chrono::time_point<std::chrono::steady_clock> counterStart = std::chrono::steady_clock::now();
-        std::chrono::time_point<std::chrono::steady_clock> counterCurrent;
-        std::chrono::duration<double> counterDuration;
-        std::chrono::duration<double> timeTaken;
+
+        double counterBounded = 0;
 
         // This boolen track if the counter should be reseted or just go on
         bool counterReset = false;

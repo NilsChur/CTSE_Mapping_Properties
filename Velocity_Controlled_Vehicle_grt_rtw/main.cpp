@@ -413,9 +413,9 @@ int nextRise(int state, bool RiseAP){
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
+            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
             if(RiseAP) {return 0;}
-            if(!RiseAP) {return 1;}
+            //if(!RiseAP) {return 1;} // This transition does not exist in the automaton
 
         case 1:
             
@@ -447,7 +447,7 @@ int nextOvershoot(int state, bool OvershootAP){
             return 0; // state is now initilized but not visited
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
+            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
             if(!OvershootAP) {return 0;}
             if(OvershootAP) {return 1;}
 
@@ -479,9 +479,9 @@ int nextBounded(int state, bool BoundedAP){
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
+            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
             if(BoundedAP) {return 0;}
-            if(!BoundedAP) {return 1;}
+            //if(!BoundedAP) {return 1;} // This transition does not exist in the automaton
 
         case 1:
             if(BoundedAP) {return 0;}
@@ -511,9 +511,9 @@ int nextSettlingTime(int state, bool StableAP){
         return 1;
 
     case 0:
-        __vm_ctl_flag(0, _VM_CF_Accepting);
+        __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
         if(StableAP) {return 0;}
-        if(!StableAP) {return 1;}
+        //if(!StableAP) {return 1;} // This transition does not exist in the automaton
 
     case 1:
         if(StableAP) {return 0;}
@@ -664,7 +664,6 @@ int_T main(int_T argc, const char *argv[])
         
         /*
         * 
-        * Small note here:
         * No need for an extra call for the observer transitions, because the observer is part of the model.
         * Everytime the model does a step is "automatically" updates the values. 
         * Therefore, rt_OneStep(...) also updates the Observer.

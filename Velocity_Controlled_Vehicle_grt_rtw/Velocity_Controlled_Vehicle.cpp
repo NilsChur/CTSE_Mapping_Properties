@@ -189,6 +189,9 @@ void Velocity_Controlled_VehicleModelClass::step()
     Velocity_Controlled_Vehicle_B.Ki = Velocity_Controlled_Vehicle_P.Ki_Gain *
       rtb_e;
 
+    /* Is this the time information? If so jackpott 
+    * Could be passed to the Observer and can serve as guards */
+    time_T timing = rtsiGetT(&(&Velocity_Controlled_Vehicle_M)->solverInfo);
     
     /* 
     *
@@ -199,7 +202,7 @@ void Velocity_Controlled_VehicleModelClass::step()
     * 
     */
 
-    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, Velocity_Controlled_Vehicle_B.acc);
+    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, Velocity_Controlled_Vehicle_B.acc, timing);
     ObserverFSM.transition();
   }
 

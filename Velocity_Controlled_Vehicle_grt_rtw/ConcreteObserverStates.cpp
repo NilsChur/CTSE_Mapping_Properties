@@ -37,37 +37,43 @@ ObserverState& Bounded::getInstance() {
     return singleton;
 }
 
+/*
+* The part below covers all possible transitions between the State.
+* The Guard are also implemented, may need still some fine tuning (21.06.2023)
+*/
 
-// Possible Transitions from Rest
+/* 
+* Possible Transitions from Rest
+*/
 void Rest::transition(Observer* observer) {
 
-    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED TO YOUR USE CASE !!!
+    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
 
     // Transition Rest -> Transient 
-    if (observer->reference == true && observer->error >= observer->epsilon) {
+    if (observer->reference == true && observer->error >= observer->epsilon) { // should transit as soon as a reference is set (/=0), therefore, true.
         observer->setState(Transient::getInstance());
+        //cout << "Next State: Transient" << endl;
     }
     // Selfloop
     else if (observer->error <= observer->epsilon) {
         observer->setState(Rest::getInstance());
+        //cout << "Next State: Rest" << endl;
     }
 }
 
-// Possible Transitions from Transient
+/*
+* Possible Transitions from Transient
+*/
 void Transient::transition(Observer* observer) {
 
     // Sets the boolean for Transient to true, because Transient is now visited
     observer->setTransientVisited();
 
-    // Tracks time when entered this state
-    observer->setCurrentTime();
+    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
 
-    timeTaken = observer->returnCurrentTime() - observer->returnStartTime();
-
-    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED TO AOUR USE CASE!!!
 
     // Transition Transient -> Rise
-    if (observer->sysOut >= observer->riseLevel*observer->reference && timeTaken.count() <= observer->riseTime && observer->wasRiseVisited() == false /*&& observer->sysOut <= observer->reference)*/ ){
+    if (observer->error <= observer->riseLevel && observer->time <= observer->riseTime && observer->wasRiseVisited() == false){
         observer->setState(Rise::getInstance());
     }
 
@@ -82,20 +88,22 @@ void Transient::transition(Observer* observer) {
         observer->setState(Overshoot::getInstance());
     }
     
+
     // Selfloop
     else {
         observer->setState(Transient::getInstance());
     }
 }
 
-// Possible Transitions from Rise
+/*
+* Possible Transitions from Rise
+*/
 void Rise::transition(Observer* observer) {
 
     // Sets the boolean for Rise to true, because Rise is now visited
     observer->setRistVisited();
 
-    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED TO YOUR USE CASE !!!
-
+    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
     // Transition Rise -> Overshoot
     if (observer->sysOut > observer->overshootLevel*observer->reference) {
         observer->setState(Overshoot::getInstance());
@@ -112,13 +120,15 @@ void Rise::transition(Observer* observer) {
     }
 }
 
-// Possible Transitions from Overshoot
+/*
+* Possible Transitions from Overshoot
+*/
 void Overshoot::transition(Observer* observer) {
 
     // Sets the boolean for Overshoot to true, because Overshoot is now visited
     observer->setOvershootVisited();
 
-    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED TO YOUR USE CASE!!!
+    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
 
     // Transition Overshoot -> Bounded
     if (observer->error <= observer->epsilon)
@@ -140,29 +150,22 @@ void Overshoot::transition(Observer* observer) {
     
 }
 
-// Possible Transitions from Bounded
+/*
+* Possible Transitions from Bounded
+*/
 void Bounded::transition(Observer* observer) {
 
     // Sets the boolean for Bounded to true, because Bounded is now visited
     observer->setBoundedVisited();
     
     if (counterReset == true) {
-        counterStart = std::chrono::steady_clock::now();
+        counterBounded = 0;
     }
 
-    counterCurrent = std::chrono::steady_clock::now();
-
-    counterDuration = counterCurrent - counterStart;
-    
-    // Tracks time when entered this state
-    observer->setCurrentTime();
-
-    timeTaken = observer->returnCurrentTime() - observer->returnStartTime();
-
-    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED TO YOUR USE CASE !!!
+    // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
 
     // Transition Bounded -> Rest
-    if (observer->error <= observer->epsilon && (timeTaken.count()-counterDuration.count()) <= observer->settlingTime && counterDuration.count() >= counterLimit)
+    if (observer->error <= observer->epsilon && (observer->time - counterBounded) <= observer->settlingTime && counterBounded >= counterLimit)
     {
         observer->setState(Rest::getInstance());
         counterReset = true;
