@@ -413,9 +413,8 @@ int nextRise(int state, bool RiseAP){
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+            __vm_ctl_flag(0, _VM_CF_Accepting);
             if(RiseAP) {return 0;}
-            //if(!RiseAP) {return 1;} // This transition does not exist in the automaton
 
         case 1:
             
@@ -447,7 +446,7 @@ int nextOvershoot(int state, bool OvershootAP){
             return 0; // state is now initilized but not visited
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+            __vm_ctl_flag(0, _VM_CF_Accepting);
             if(!OvershootAP) {return 0;}
             if(OvershootAP) {return 1;}
 
@@ -479,9 +478,8 @@ int nextBounded(int state, bool BoundedAP){
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+            __vm_ctl_flag(0, _VM_CF_Accepting);
             if(BoundedAP) {return 0;}
-            //if(!BoundedAP) {return 1;} // This transition does not exist in the automaton
 
         case 1:
             if(BoundedAP) {return 0;}
@@ -511,9 +509,8 @@ int nextSettlingTime(int state, bool StableAP){
         return 1;
 
     case 0:
-        __vm_ctl_flag(0, _VM_CF_Accepting); // !!! Have to google was this means !!! 
+        __vm_ctl_flag(0, _VM_CF_Accepting);
         if(StableAP) {return 0;}
-        //if(!StableAP) {return 1;} // This transition does not exist in the automaton
 
     case 1:
         if(StableAP) {return 0;}
@@ -627,6 +624,13 @@ int_T main(int_T argc, const char *argv[])
      *       buchi_step();
      *   }
      * */
+
+
+    /*
+    * Initialize Observer thresholds epsilon, overshoot, rise level, rise time and settling time
+    */
+    MODEL_INSTANCE.ObserverFSM.initialThreshold(5.0, 10.0, 90.0, 1.5, 5.0);
+
     /* 
      * States for model checking with Divine
      * Four different states are needed for each büchi automaton
@@ -635,10 +639,6 @@ int_T main(int_T argc, const char *argv[])
     int stateOvershoot = -1, oldStateOvershoot = 0;
     int stateBounded = -1, oldStateBounded = 0;
     int stateSettlingTime = -1, oldStateSettlingTime = 0;
-
-    // Test if you can access the Observer
-    MODEL_INSTANCE.ObserverFSM.initialThreshold(5.0, 10.0, 90.0, 1.5, 5.0); // look likes it works
-    
 
 
     //while (rtmGetErrorStatus(MODEL_INSTANCE.getRTM()) == NULL &&
@@ -679,12 +679,44 @@ int_T main(int_T argc, const char *argv[])
 
         // state = next( state, MODEL_INSTANCE.AP);
         // __dios_trace_f( "state: %d -> %d", oldstate, state );
-        
-        // Divine marco
+
+
         __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
+        __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
         __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
         __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
-        __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
+
+        /* 
+        * Choose which property to test, multiple simulaniously testin is not possible (i think) 
+        * Options:
+        * 1 = Rise
+        * 2 = Settle
+        * 3 = Overshoot
+        * 4 = Bounded 
+        * Default is Overshoot 
+        
+
+        string propertyToBeTested = 3;
+        
+        switch (propertyToBeTested)
+        {
+        case 1:
+            __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
+            break;
+        case 2:
+            __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
+            break;
+        case 3:
+            __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
+            break;
+        case 4:
+             __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
+             break;
+        default:
+            __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
+            break;
+        }
+        */
     
     }
 

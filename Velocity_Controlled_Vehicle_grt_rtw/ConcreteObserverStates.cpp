@@ -45,7 +45,7 @@ void Rest::transition(Observer* observer) {
     // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
 
     // Transition Rest -> Transient 
-    if (observer->reference == true && observer->error >= observer->epsilon) { // should transit as soon as a reference is set (/=0), therefore, true.
+    if (observer->reference != 0 && observer->error >= observer->epsilon) { // should transit as soon as a reference is set (/=0), therefore, true.
         observer->setState(Transient::getInstance());
     }
     // Selfloop

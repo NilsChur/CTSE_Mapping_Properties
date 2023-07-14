@@ -53,7 +53,6 @@ void Observer::setExternalInput(double Input1, double Input2, double Input3, dou
     error = fabs(Input2/Input1)*100;
     sysOut = Input3;
     time = Input4;
-    printf("Time: %Lf\n", time);
 }
 
 /*

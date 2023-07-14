@@ -198,11 +198,11 @@ void Velocity_Controlled_VehicleModelClass::step()
     * Pass values to the Observer
     * The error of the system is captured by the variable:        rtb_e
     * The reference is captrued by the variable:                  Velocity_Controlled_Vehicle_B.ref
-    * The output of the system is captured by the variable:       Velocity_Controlled_Vehicle_B.acc
+    * The output of the system is captured by the variable:       (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] + Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1])
     * 
     */
 
-    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, Velocity_Controlled_Vehicle_B.acc, timing);
+    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] + Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1]), timing);
     ObserverFSM.transition();
   }
 
