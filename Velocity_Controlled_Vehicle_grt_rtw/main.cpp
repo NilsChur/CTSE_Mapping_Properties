@@ -387,11 +387,6 @@ static int_T rt_TermModel(MODEL_CLASSNAME & mdl)
  * - (...).ObserverFSM.wasOvershootVisited(); return a boolen if the state Overshoot was visited
  * - (...).ObserverFSM.wasBoundedVisited(); return a boolen if the state Bounded was visited
  * 
- * But, is one function next that covers all properties necessary or multiple function that each cover one automaton?
- * First try with multiple functions that each cover one büchi automaton
- * all functions follow the schema int next_(...)(int state, Observer observer)
- * - were next_(...) donates the property for which the büchi automaton stands
- * - and int state and Observer observer the model instance 
 */
 
 // Checks if the system reaches the rise state
@@ -451,6 +446,7 @@ int nextOvershoot(int state, bool OvershootAP){
             if(OvershootAP) {return 1;}
 
         case 1:
+            __vm_ctl_flag(0, _VM_CF_Error);
             if (OvershootAP) {return 1;}
 
         default:
@@ -522,57 +518,6 @@ int nextSettlingTime(int state, bool StableAP){
 };
 
 
-
-
-/* Function: next ====================================================
- * 
- * Abstract:
- *   Sync the büchi automata (property) with the system
- *   Property: <>([]safe)
- *   Type: Liveness (execute with --liveness)  
- */
-
-// int next( int state, std::map<APs, bool> AP ) {
-
-//     __dios_trace_f("AP[safe]: %x", AP[safe]); 
-//     switch ( state ) {
-//         case -1:
-//             return 0;
-//         /*
-//         T0_init:
-//         if
-//         :: (true) -> goto T0_init
-//         :: (safe) -> goto accept_S1
-//         fi;
-//          */
-//         case 0:
-//             if (!AP[safe]) {return 0;}
-//             if (AP[safe]) {return __vm_choose( 2 ) ? 0 : 1;}
-//         /*
-//         accept_S1:
-//         if
-//         :: (safe) -> goto accept_S1
-//         :: (!(safe)) -> goto T0_S2
-//         fi;
-//         */
-//         case 1:
-//             __vm_ctl_flag( 0, _VM_CF_Accepting);
-//             if (AP[safe]) {return 1;}
-//             if (!AP[safe]) {return 2;}
-//         /*
-//         T0_S2:
-//         if
-//         :: (true) -> goto T0_S2
-//         fi;
-//         */
-//         case 2:
-//             return 2;
-//         default:
-//             return state;
-//     }
-// }
-
-
 /* Function: main =============================================================
  *
  * Abstract:
@@ -632,8 +577,8 @@ int_T main(int_T argc, const char *argv[])
     MODEL_INSTANCE.ObserverFSM.initialThreshold(5.0, 10.0, 90.0, 1.5, 5.0);
 
     /* 
-     * States for model checking with Divine
-     * Four different states are needed for each büchi automaton
+     * Init states for model checking with Divine
+     * For each büchi automata an old and current state is needed
     */
     int stateRise = -1, oldStateRise = 0;
     int stateOvershoot = -1, oldStateOvershoot = 0;
@@ -664,8 +609,8 @@ int_T main(int_T argc, const char *argv[])
         
         /*
         * 
-        * No need for an extra call for the observer transitions, because the observer is part of the model.
-        * Everytime the model does a step is "automatically" updates the values. 
+        * No need for to explicit call the observer transitions, because the observer is part of the model.
+        * Everytime the model does a step is "automatically" updates the observer. 
         * Therefore, rt_OneStep(...) also updates the Observer.
         * 
         */
@@ -677,16 +622,13 @@ int_T main(int_T argc, const char *argv[])
         stateBounded = nextBounded(stateBounded, MODEL_INSTANCE.ObserverFSM.wasBoundedVisited());
         stateSettlingTime = nextSettlingTime(stateSettlingTime, MODEL_INSTANCE.ObserverFSM.wasRestVisited());
 
-        // state = next( state, MODEL_INSTANCE.AP);
-        // __dios_trace_f( "state: %d -> %d", oldstate, state );
-
 
         __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
         __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
         __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
         __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
 
-        /* 
+        /* // !!! Test !!!
         * Choose which property to test, multiple simulaniously testin is not possible (i think) 
         * Options:
         * 1 = Rise
