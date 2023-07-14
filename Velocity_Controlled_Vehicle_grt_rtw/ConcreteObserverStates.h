@@ -72,10 +72,12 @@ class Bounded : public ObserverState {
         bool counterReset = false;
 
         /* 
-        * counterLimit is the value in seconds that the FSM must remain in Bounded
-        * before it is considered stable and transits back to Rest
+        * counterLimit is the value in seconds that the FSM must remain in Bounded.
+        * before it is considered stable and transits back to Rest.
+        * This is iterative, therefore, each time the state is entered, the counter is increased.
+        * Number of times bounded should be entered at least before it is assumed to be stable/at rest.
         */
-        double counterLimit = 2; // in seconds
+        double counterLimit = 20; 
 
         Bounded() {}
         Bounded(const Bounded& other);
