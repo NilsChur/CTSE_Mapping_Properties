@@ -20,6 +20,9 @@
 
 #include "Velocity_Controlled_Vehicle.h"
 #include "Velocity_Controlled_Vehicle_private.h"
+#include <dios.h>
+#include <sys/divm.h>
+#include <iostream>
 
 /*
  * This function updates continuous states using the ODE3 fixed-step
@@ -198,12 +201,18 @@ void Velocity_Controlled_VehicleModelClass::step()
     * Pass values to the Observer
     * The error of the system is captured by the variable:        rtb_e
     * The reference is captrued by the variable:                  Velocity_Controlled_Vehicle_B.ref
-    * The output of the system is captured by the variable:       (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] + Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1])
-    * 
+    * The output of the system is captured by the variable:       Velocity_Controlled_Vehicle_B.acc
+    * !!! Is not the system out put it is the manipulated variable !!!
     */
 
-    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] + Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1]), timing);
+    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] *
+       Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] +
+       Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] *
+       Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1]), timing);
     ObserverFSM.transition();
+    //__dios_trace_f("Thresholds: %d, %d, %d, %d, %d", ObserverFSM.epsilon, ObserverFSM.overshootLevel, ObserverFSM.riseLevel, ObserverFSM.riseTime, ObserverFSM.settlingTime );
+    //__dios_trace_f("Here transition");
+
   }
 
 
@@ -403,6 +412,9 @@ void Velocity_Controlled_VehicleModelClass::initialize()
 
   /* Enable for Sin: '<Root>/Sine Wave' */
   Velocity_Controlled_Vehicle_DW.systemEnable = 1;
+
+  /* Test */
+  //Observer ObserverFSM;
 }
 
 /* Model terminate function */

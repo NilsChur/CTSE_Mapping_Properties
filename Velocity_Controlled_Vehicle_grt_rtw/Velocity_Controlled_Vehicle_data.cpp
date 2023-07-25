@@ -27,7 +27,7 @@ P_Velocity_Controlled_Vehicle_T Velocity_Controlled_VehicleModelClass::
   /* Expression: 1
    * Referenced by: '<Root>/Sine Wave'
    */
-  1.0,
+  5.0,
 
   /* Expression: 30
    * Referenced by: '<Root>/Sine Wave'

@@ -387,6 +387,11 @@ static int_T rt_TermModel(MODEL_CLASSNAME & mdl)
  * - (...).ObserverFSM.wasOvershootVisited(); return a boolen if the state Overshoot was visited
  * - (...).ObserverFSM.wasBoundedVisited(); return a boolen if the state Bounded was visited
  * 
+ * But, is one function next that covers all properties necessary or multiple function that each cover one automaton?
+ * First try with multiple functions that each cover one büchi automaton
+ * all functions follow the schema int next_(...)(int state, Observer observer)
+ * - were next_(...) donates the property for which the büchi automaton stands
+ * - and int state and Observer observer the model instance 
 */
 
 // Checks if the system reaches the rise state
@@ -409,10 +414,12 @@ int nextRise(int state, bool RiseAP){
 
         case 0:
             __vm_ctl_flag(0, _VM_CF_Accepting);
+            //__vm_ctl_flag(0, _VM_CF_Error);
             if(RiseAP) {return 0;}
+            //if(!RiseAP) {return 1;} // This transition does not exist in the automaton
 
         case 1:
-            
+            //__vm_ctl_flag(0, _VM_CF_Accepting);
             if(RiseAP) {return 0;}
             if(!RiseAP) {return 1;}
 
@@ -435,13 +442,13 @@ int nextOvershoot(int state, bool OvershootAP){
         fi;
     }
     */
-    __dios_trace_f("Overshoot; %x", OvershootAP);
+    __dios_trace_f("Overshoot: %x", OvershootAP);
     switch (state) {
         case -1: // initial state
             return 0; // state is now initilized but not visited
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
+            //__vm_ctl_flag(0, _VM_CF_Accepting);
             if(!OvershootAP) {return 0;}
             if(OvershootAP) {return 1;}
 
@@ -475,9 +482,12 @@ int nextBounded(int state, bool BoundedAP){
 
         case 0:
             __vm_ctl_flag(0, _VM_CF_Accepting);
+            //__vm_ctl_flag(0, _VM_CF_Error);
             if(BoundedAP) {return 0;}
+            //if(!BoundedAP) {return 1;} // This transition does not exist in the automaton
 
         case 1:
+            //__vm_ctl_flag(0, _VM_CF_Accepting);
             if(BoundedAP) {return 0;}
             if(!BoundedAP) {return 1;}
 
@@ -506,9 +516,12 @@ int nextSettlingTime(int state, bool StableAP){
 
     case 0:
         __vm_ctl_flag(0, _VM_CF_Accepting);
+        //__vm_ctl_flag(0, _VM_CF_Error);
         if(StableAP) {return 0;}
+        //if(!StableAP) {return 1;} // This transition does not exist in the automaton
 
     case 1:
+        //__vm_ctl_flag(0, _VM_CF_Accepting);
         if(StableAP) {return 0;}
         if(!StableAP) {return 1;}
 
@@ -516,6 +529,57 @@ int nextSettlingTime(int state, bool StableAP){
         return state;
    }
 };
+
+
+
+
+/* Function: next ====================================================
+ * 
+ * Abstract:
+ *   Sync the büchi automata (property) with the system
+ *   Property: <>([]safe)
+ *   Type: Liveness (execute with --liveness)  
+ */
+
+// int next( int state, std::map<APs, bool> AP ) {
+
+//     __dios_trace_f("AP[safe]: %x", AP[safe]); 
+//     switch ( state ) {
+//         case -1:
+//             return 0;
+//         /*
+//         T0_init:
+//         if
+//         :: (true) -> goto T0_init
+//         :: (safe) -> goto accept_S1
+//         fi;
+//          */
+//         case 0:
+//             if (!AP[safe]) {return 0;}
+//             if (AP[safe]) {return __vm_choose( 2 ) ? 0 : 1;}
+//         /*
+//         accept_S1:
+//         if
+//         :: (safe) -> goto accept_S1
+//         :: (!(safe)) -> goto T0_S2
+//         fi;
+//         */
+//         case 1:
+//             __vm_ctl_flag( 0, _VM_CF_Accepting);
+//             if (AP[safe]) {return 1;}
+//             if (!AP[safe]) {return 2;}
+//         /*
+//         T0_S2:
+//         if
+//         :: (true) -> goto T0_S2
+//         fi;
+//         */
+//         case 2:
+//             return 2;
+//         default:
+//             return state;
+//     }
+// }
 
 
 /* Function: main =============================================================
@@ -571,14 +635,13 @@ int_T main(int_T argc, const char *argv[])
      * */
 
 
-    /*
-    * Initialize Observer thresholds epsilon, overshoot, rise level, rise time and settling time
-    */
-    MODEL_INSTANCE.ObserverFSM.initialThreshold(5.0, 10.0, 90.0, 1.5, 5.0);
+    // Test if you can access the Observer
+    MODEL_INSTANCE.ObserverFSM.initialThreshold(5.0, 10.0, 90.0, 0.7, 2.0); // look likes it works
+
 
     /* 
-     * Init states for model checking with Divine
-     * For each büchi automata an old and current state is needed
+     * States for model checking with Divine
+     * Four different states are needed for each büchi automaton
     */
     int stateRise = -1, oldStateRise = 0;
     int stateOvershoot = -1, oldStateOvershoot = 0;
@@ -609,57 +672,36 @@ int_T main(int_T argc, const char *argv[])
         
         /*
         * 
-        * No need for to explicit call the observer transitions, because the observer is part of the model.
-        * Everytime the model does a step is "automatically" updates the observer. 
+        * No need for an extra call for the observer transitions, because the observer is part of the model.
+        * Everytime the model does a step is "automatically" updates the values. 
         * Therefore, rt_OneStep(...) also updates the Observer.
         * 
         */
         rt_OneStep(MODEL_INSTANCE);
         
+        
         // Each Büchi automaton is updated 
-        stateRise = nextRise(stateRise, MODEL_INSTANCE.ObserverFSM.wasRiseVisited());
-        stateOvershoot = nextOvershoot(stateOvershoot, MODEL_INSTANCE.ObserverFSM.wasOvershootVisited());
-        stateBounded = nextBounded(stateBounded, MODEL_INSTANCE.ObserverFSM.wasBoundedVisited());
+        //stateRise = nextRise(stateRise, MODEL_INSTANCE.ObserverFSM.wasRiseVisited());
+        //stateOvershoot = nextOvershoot(stateOvershoot, MODEL_INSTANCE.ObserverFSM.wasOvershootVisited());
+        //stateBounded = nextBounded(stateBounded, MODEL_INSTANCE.ObserverFSM.wasBoundedVisited());
         stateSettlingTime = nextSettlingTime(stateSettlingTime, MODEL_INSTANCE.ObserverFSM.wasRestVisited());
 
-
-        __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
+        // state = next( state, MODEL_INSTANCE.AP);
+        // __dios_trace_f( "state: %d -> %d", oldstate, state );
+        
+        // Divine marco
+        //__dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
+        //__dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
+        //__dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
         __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
-        __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
-        __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
-
-        /* // !!! Test !!!
-        * Choose which property to test, multiple simulaniously testin is not possible (i think) 
-        * Options:
-        * 1 = Rise
-        * 2 = Settle
-        * 3 = Overshoot
-        * 4 = Bounded 
-        * Default is Overshoot 
         
+        /* Work if boolean are manualy set to true...*/
+        //MODEL_INSTANCE.ObserverFSM.setBoundedVisited();
+        //MODEL_INSTANCE.ObserverFSM.setRiseVisited();
+        //MODEL_INSTANCE.ObserverFSM.setOvershootVisited();
+        //MODEL_INSTANCE.ObserverFSM.setRestVisited();
 
-        string propertyToBeTested = 3;
-        
-        switch (propertyToBeTested)
-        {
-        case 1:
-            __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
-            break;
-        case 2:
-            __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
-            break;
-        case 3:
-            __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
-            break;
-        case 4:
-             __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
-             break;
-        default:
-            __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
-            break;
-        }
-        */
-    
+       
     }
 
     /*******************************

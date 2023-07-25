@@ -21,7 +21,7 @@ PRODUCT_NAME              = Velocity_Controlled_Vehicle
 MAKEFILE                  = Velocity_Controlled_Vehicle.mk
 ##START_DIR                 = "/absolute-path/to/repo"
 ## For Linux VM on my WIN10 PC 
-START_DIR				  = /home/nils/Documents/CTSE_Property_mapping-main
+START_DIR				  = /home/nils/Documents/CTSE_Property_mapping-time
 MATLAB_ROOT               = $(START_DIR)/MATLAB/R2021a
 #MATLAB_ROOT               = /usr/local/MATLAB/R2021a
 MATLAB_BIN                = /usr/local/MATLAB/R2021a/bin

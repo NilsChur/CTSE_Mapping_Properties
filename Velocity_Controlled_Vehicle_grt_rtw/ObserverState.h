@@ -16,5 +16,9 @@ class ObserverState{
         virtual void transition(Observer* observer) = 0;
 
         // Destructor
-        virtual ~ObserverState() {}    
+        virtual ~ObserverState() {}
+
+    //private: No privat Methods/Attributes!?
+        
+    
 };

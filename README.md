@@ -31,8 +31,7 @@ To generate the code from the Simulink model follow the steps below and the [MAT
 - Choose either:
     - Generate Code Only = True; This does not generate a makefile only the code artifacts
     - Generate Code Only = False; This build the whole program and generates a makefile
-    - Package Code; Generate some needed MATLAB files for compiling
-- ! Probably while compiling the MATLAB files will not be found, copie them from your MATLAB_ROOT folder on your system, same goes for the main function template...
+    - ! Probably while compiling the MATLAB files will not be found, copie them from your MATLAB_ROOT folder on your system, same goes for the main function template...
 - Interface: Class; Warning set to NONE
 - Then open the Simulink Coder app and click on generate code or build
 
@@ -65,15 +64,15 @@ Here the Observer consits of 5 states:
   - Overshoot
   - Bounded
 
-Initially the observer is in the rest state, but once it was triggered by an external input the observer changes to transient.
+Initially the observer is in the rest state, but once it was triggeret by an external input the observer changes to transient.
 If the system reaches a specific value wihtin a specific time the observer tranists to the rise state. 
-If the system overshoot a predefined value the observer transits to overshoot and if the system output is bounded by a defined margin the observer tranits to bounded.
+If the system overshoot a predefined value the observer transits to overshoot and if the system putput is bounded by a defined margin the observer tranits to bounded.
 Furthermore, if the observer stays in the bounded state long enough, it is assumed that the system has settled down and is called stable. The the observer then returns to the rest state.
 
 ### Interface
 
-The observer provides various methods to get access to data and write data to the observer.
-This section breifly describes how to address the observer, so how you can pass date to the observer and how to get information about its state/data. As well as, how you set the thresholds for each state.
+The observer provied vasrious methods to get acces to data and write data to the observer.
+This section breifly describes how the observer can be adressed, so have can you pass date to the observer and how to get informations about it state/data. As well as how you set the thresholds for each state.
 
 #### Setting the input data
 The observer is equipt with the method setExternalInput(double ...), this method has three input:
@@ -85,28 +84,28 @@ With this method you can pass a reference signal, the error (difference between 
 
 #### Set Thresholds for Guards
 
-Moreover, the observer provides the method initialThreshold(double ...), this method has five input:
+Moreover, the observer provieds the method initialThreshold(double ...), this method has five input:
   - epsilon
   - overshootLevel
   - riseLevel
   - riseTime
   - settlingTime
 in exactly this order.
-Epsilon is a percentage of the maximum steady-state error compared to the settling point.
+Epsilon percentage of the maximum steady state error compared to the settling point.
 overshootLevel describes the Maximum percentage over the reference that is reached.
-riseLevel defines the time the system takes to rise from the start point to and the end point. Here the start point is zero and the end point is 90% of the reference.
+riseLevel defines the time the system needs to rise from starting point to and ending point. Here the start point is zero and the ending point is 90% of the reference.
 settlingTime is defined by the time the system needs to enter and remain in a specific error band.
 
 #### Return Visited States
 
-The observer can return which state was visited or not. The method was*enter specific state*Visited() returns a boolean if the state was visited or not. 1, if it was visited and 0, if not. Keep in mind *enter specific state* is a placeholder for the real state. Therefore, this method exsists five times, once for each state.
+The observer can return if state was visited or not. The method was*enter specific state*Visited() return a boolen if the state was visited or not. 1 if it was visited and 0 if not. Keep in mind *enter specific state* is a placeholder for the real state. This method exsists therefore five time, for each state.
 
 
 
 ## Contact
 
-Feel free to submit issues or improvements.
+Feel free to submit issues or improvements
 
-Don't hesitate to contact us, for questions, discussions, or suggestions.
+Don't hesitate to contact us, for questions, discussion, or suggestions.
 
 Nils Chur (nils.chur@rub.de)
