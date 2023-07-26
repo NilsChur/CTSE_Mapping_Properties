@@ -72,7 +72,7 @@ class Bounded : public ObserverState {
         bool counterReset = false;
 
         /* 
-        * counterLimit is the value in seconds that the FSM must remain in Bounded
+        * counterLimit is the value in steps that the FSM must remain in Bounded
         * before it is considered stable and transits back to Rest
         */
         double counterLimit = 20; // in seconds

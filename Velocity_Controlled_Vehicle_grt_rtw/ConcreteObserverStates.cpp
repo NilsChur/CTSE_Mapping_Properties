@@ -9,7 +9,6 @@
 #include <dios.h>
 #include <sys/divm.h>
 #include <iostream>
-//using namespace std;
 
 
 /*
@@ -56,14 +55,12 @@ void Rest::transition(Observer* observer) {
     // !!! GUARD CONDITIONS MAY NEED TO BE ADJUSTED !!!
 
     // Transition Rest -> Transient 
-    if (observer->reference != 0 && observer->error >= observer->epsilon) { // should transit as soon as a reference is set (/=0), therefore, true.
+    if (observer->reference != 0 && observer->error >= observer->epsilon) {
         observer->setState(Transient::getInstance());
-        //cout << "Next State: Transient" << endl;
     }
     // Selfloop
     else if (observer->error <= observer->epsilon) {
         observer->setState(Rest::getInstance());
-        //cout << "Next State: Rest" << endl;
     }
 }
 

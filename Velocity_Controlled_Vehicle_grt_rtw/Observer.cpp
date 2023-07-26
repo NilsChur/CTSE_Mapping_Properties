@@ -23,25 +23,12 @@ Observer::Observer() {
     sysOut = 0;
     time = 0;
 
-    /*
-    * Clock initialization and set reference value.
-    * As soon as the Observer is generated the clocks starts ticking.
-    */
-    //std::chrono::steady_clock::time_point clockStart = std::chrono::steady_clock::now();
-    //std::chrono::steady_clock::time_point clockNow;
-
-    //clockStart = std::chrono::steady_clock::now();
-
     // Init all states with false -> not entered
-
     restWasEntered = false;
     transientWasEntered = false;
     riseWasEntered = false;
     overshootWasEntered = false;
     boundedWasEntered = false;
-
-
-
 
     // Thresholds
     epsilon = 0.0;
@@ -131,25 +118,3 @@ void Observer::setOvershootVisited(){
 void Observer::setBoundedVisited(){
     boundedWasEntered = true;
 };
-
-
-/*
-* Starts the timer for checking time constraints
-*/
-/*void Observer::setCurrentTime() {
-    clockNow = std::chrono::steady_clock::now();
-}
-
-std::chrono::time_point<std::chrono::steady_clock> Observer::returnCurrentTime() {
-    return clockNow;
-}
-
-std::chrono::time_point<std::chrono::steady_clock> Observer::returnStartTime(){
-    return clockStart;
-}
-*/
-/* 
-* Maybe need later
-void Observer::stop_timer() {
-}
-*/
