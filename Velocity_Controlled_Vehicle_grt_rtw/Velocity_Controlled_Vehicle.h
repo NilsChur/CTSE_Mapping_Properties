@@ -28,14 +28,16 @@
 #include "rtw_solver.h"
 #include "rt_logging.h"
 #include "Velocity_Controlled_Vehicle_types.h"
+#include <map>
 
 /* Shared type includes */
 #include "multiword_types.h"
 #include "rt_nonfinite.h"
 
-/* Include Observer */
-#include "Observer.h"
-#include "ObserverState.h"
+
+/* Atomic Propositions for Model Checking*/
+enum APs {rise, overshoot, safe, settling};
+// enum APs {safe};
 
 /* Macros for accessing real-time model data structure */
 #ifndef rtmGetContStateDisabled
@@ -319,15 +321,7 @@ class Velocity_Controlled_VehicleModelClass {
   /* Real-Time Model get method */
   RT_MODEL_Velocity_Controlled__T * getRTM();
 
-  /*
-  * Adds the Observer to the vehicle model class
-  * Hopefully inits the Observer just once and can then be updated any time
-  * To acces the observer something like "modelName".ObserverFSM.returnStates...
-  * Dont know whether wiht or without pointer... 
-  * Observer* ObserverFSM;
-  */
-
-  Observer ObserverFSM;
+  std::map<APs, bool> AP;
 
   /* private data and function members */
  private:

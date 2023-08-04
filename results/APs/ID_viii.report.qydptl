@@ -1,0 +1,359 @@
+states per second: 3209.3
+state count: 138
+mips: 2.24753
+
+version: 4.4.2
+architecture: AMD Ryzen 7 5800X 8-Core Processor
+memory used: 538648
+physical memory used: 267840
+user time: 2.387826
+system time: 0.049642
+wall time: 2.393330
+
+cycle timers (search):
+  smt-f: { mcycles: 0, hits: 0, kc-avg: 0 }
+  smt-eq: { mcycles: 0, hits: 0, kc-avg: 0 }
+  divm: { mcycles: 129, hits: 137, kc-avg: 948 }
+  hash: { mcycles: 11, hits: 138, kc-avg: 81 }
+input file: ../Velocity_Controlled_Vehicle.bc
+compile options:
+  - ../Velocity_Controlled_Vehicle.bc
+input options:
+  sys.0: "nofail:malloc"
+  divine.bcname: "../Velocity_Controlled_Vehicle.bc"
+dios config: fair
+lamp config: ""
+static reduction: 1
+property type: liveness
+
+timers:
+  lart: 0.762
+  loader: 1.19
+  boot: 0.027
+  search: 0.043
+  ce: 0.107
+cycle timers (ce):
+  smt-f: { mcycles: 0, hits: 0, kc-avg: 0 }
+  smt-eq: { mcycles: 0, hits: 0, kc-avg: 0 }
+  divm: { mcycles: 225, hits: 138, kc-avg: 1.64e+03 }
+  hash: { mcycles: 33, hits: 137, kc-avg: 243 }
+
+error found: yes
+error trace: |
+  [0] 
+** starting the model **
+  (0) Overshoot; 0
+  (0) state overshoot: -1 -> 0
+  (0) Overshoot; 0
+  (0) state overshoot: 0 -> 0
+  (0) Overshoot; 0
+  (0) state overshoot: 0 -> 0
+  (0) Overshoot; 0
+  (0) state overshoot: 0 -> 0
+  (0) Overshoot; 0
+  (0) state overshoot: 0 -> 0
+  (0) Overshoot; 0
+  (0) state overshoot: 0 -> 0
+  (0) Overshoot; 1
+  (0) state overshoot: 0 -> 1
+  (0) Overshoot; 1
+  FAULT: the error flag can be only changed in kernel mode
+  [0] FATAL: unknown in userspace
+
+machine trace:
+  - choices: 0/1
+    interrupts: C/1700/69:280
+  - choices: 0/1
+    interrupts: C/1360/69:280
+  - choices: 0/1
+    interrupts: C/8907/719:37
+  - choices: 0/1
+    interrupts: C/115/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/88/719:81
+  - choices: 0/1
+    interrupts: C/134/721:20
+  - choices: 0/1
+    interrupts: C/110/721:47
+  - choices: 0/1
+    interrupts: C/98/721:47
+  - choices: 0/1
+    interrupts: C/837/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: C/84/980:45
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/1025/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/893/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/903/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/951/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/893/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/903/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/951/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/893/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/903/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/951/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/893/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/903/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/951/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/893/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/903/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/951/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/895/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/909/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/957/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/895/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/905/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+  - choices: 0/1
+    interrupts: C/953/12:206
+  - choices: 0/1
+    interrupts: C/838/64:147
+  - choices: 0/1
+    interrupts: C/895/12:206
+  - choices: 0/1
+    interrupts: C/292/64:197
+  - choices: 0/1
+    interrupts: C/153/64:246
+  - choices: 0/1
+    interrupts: C/905/12:206
+  - choices: 0/1
+    interrupts: C/292/64:296
+  - choices: 0/1
+    interrupts: C/192/64:357
+  - choices: 0/1
+    interrupts: C/1509/7:555
+  - choices: 0/1
+    interrupts: C/1454/7:539
+  - choices: 0/1
+    interrupts: ""
+
+active stack:
+  - symbol: void __dios::FaultBase::handler<__dios::Context>(_VM_Fault, _VM_Frame*, void (*)())
+    location: /dios/sys/fault.hpp:119
+    pc: code* 804ad 4
+    address: alloca* 100010 0+0
+
+  - symbol: nextOvershoot(int, std::__2::map<APs, bool, std::__2::less<APs>, std::__2::allocator<std::__2::pair<APs const, bool> > >)
+    location: ./main.cpp:452
+    pc: code* 80004 36h
+    address: heap* a9e91e8a 0+0
+
+  - symbol: main
+    location: ./main.cpp:686
+    pc: code* 80007 239h
+    address: heap* 685a1fba 0+0
+
+  - symbol: __dios_start
+    location: /dios/libc/sys/start.cpp:94
+    pc: code* 803e1 25h
+    address: heap* d48cf3ae 0+0
+

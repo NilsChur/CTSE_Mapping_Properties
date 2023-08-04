@@ -21,7 +21,7 @@ PRODUCT_NAME              = Velocity_Controlled_Vehicle
 MAKEFILE                  = Velocity_Controlled_Vehicle.mk
 ##START_DIR                 = "/absolute-path/to/repo"
 ## For Linux VM on my WIN10 PC 
-START_DIR				  = /home/nils/Documents/CTSE_Property_mapping-main
+START_DIR				  = /home/nils/Documents/CTSE_Property_mapping-No-Observer
 MATLAB_ROOT               = $(START_DIR)/MATLAB/R2021a
 #MATLAB_ROOT               = /usr/local/MATLAB/R2021a
 MATLAB_BIN                = /usr/local/MATLAB/R2021a/bin
@@ -186,7 +186,7 @@ DEFINES = $(DEFINES_BUILD_ARGS) $(DEFINES_CUSTOM) $(DEFINES_OPTS) $(DEFINES_STAN
 ## SOURCE FILES
 ###########################################################################
 
-SRCS = $(MATLAB_ROOT)/rtw/c/src/rt_logging.c $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/Velocity_Controlled_Vehicle.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/Velocity_Controlled_Vehicle_data.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/rtGetInf.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/rtGetNaN.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/rt_nonfinite.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/Observer.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/ConcreteObserverStates.cpp
+SRCS = $(MATLAB_ROOT)/rtw/c/src/rt_logging.c $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/Velocity_Controlled_Vehicle.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/Velocity_Controlled_Vehicle_data.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/rtGetInf.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/rtGetNaN.cpp $(START_DIR)/Velocity_Controlled_Vehicle_grt_rtw/rt_nonfinite.cpp
 
 MAIN_SRC = $(MATLAB_ROOT)/rtw/c/src/common/rt_cppclass_main.cpp
 

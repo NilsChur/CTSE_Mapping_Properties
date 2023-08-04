@@ -72,10 +72,8 @@ the 'Terminate function required' option.
  * Includes *
  *==========*/
 #include "Velocity_Controlled_Vehicle.h"
-#include "Observer.h"
-// #pragma "Observer.h" reason why pragma?
-
 #include <iostream>
+
 // For DIVINE
 #include <dios.h>
 #include <sys/divm.h>
@@ -387,10 +385,15 @@ static int_T rt_TermModel(MODEL_CLASSNAME & mdl)
  * - (...).ObserverFSM.wasOvershootVisited(); return a boolen if the state Overshoot was visited
  * - (...).ObserverFSM.wasBoundedVisited(); return a boolen if the state Bounded was visited
  * 
+ * But, is one function next that covers all properties necessary or multiple function that each cover one automaton?
+ * First try with multiple functions that each cover one büchi automaton
+ * all functions follow the schema int next_(...)(int state, Observer observer)
+ * - were next_(...) donates the property for which the büchi automaton stands
+ * - and int state and Observer observer the model instance 
 */
 
 // Checks if the system reaches the rise state
-int nextRise(int state, bool RiseAP){
+int nextRise(int state, std::map<APs, bool> AP){
     /*
     never { Frise 
     T0_init:
@@ -402,19 +405,19 @@ int nextRise(int state, bool RiseAP){
         skip
     }
     */
-    __dios_trace_f("Rise: %x", RiseAP);
+    __dios_trace_f("Rise: %x", AP[rise]);
     switch(state) {
         case -1:
             return 1;
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
-            if(RiseAP) {return 0;}
+            __vm_ctl_flag(0, _VM_CF_Error);
+            if(AP[rise]) {return 0;}
 
         case 1:
             
-            if(RiseAP) {return 0;}
-            if(!RiseAP) {return 1;}
+            if(AP[rise]) {return 0;}
+            if(!AP[rise]) {return 1;}
 
         default:
             return state;
@@ -422,7 +425,7 @@ int nextRise(int state, bool RiseAP){
 };
 
 // Checks if the system reaches the overshoot state
-int nextOvershoot(int state, bool OvershootAP){
+int nextOvershoot(int state, std::map<APs, bool> AP){
     /* never { G!overshoot 
     accept_init:
         if
@@ -435,87 +438,152 @@ int nextOvershoot(int state, bool OvershootAP){
         fi;
     }
     */
-    __dios_trace_f("Overshoot; %x", OvershootAP);
+    __dios_trace_f("Overshoot; %x", AP[overshoot]);
     switch (state) {
         case -1: // initial state
             return 0; // state is now initilized but not visited
 
         case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
-            if(!OvershootAP) {return 0;}
-            if(OvershootAP) {return 1;}
+            // __vm_ctl_flag(0, _VM_CF_Error);
+            if(!AP[overshoot]) {return 0;}
+            if(AP[overshoot]) {return 1;}
 
         case 1:
             __vm_ctl_flag(0, _VM_CF_Error);
-            if (OvershootAP) {return 1;}
+            if (AP[overshoot]) {return 1;}
 
         default:
             return state;
 
    }
-};
-
-// Checks if the system reaches a bounded state, therfore, is stable but not necesseraly within settling time 
-int nextBounded(int state, bool BoundedAP){
-    /*
-    never { Fbounded
-    T0_init:
-    if
-        :: (bounded) -> goto accept_all
-        :: (!(bounded)) -> goto T0_init
-        fi;
-    accept_all:
-       skip
-    }
-    */
-   __dios_trace_f("Bounded: %x", BoundedAP); 
-    switch(state) {
-        case -1:
-            return 1;
-
-        case 0:
-            __vm_ctl_flag(0, _VM_CF_Accepting);
-            if(BoundedAP) {return 0;}
-
-        case 1:
-            if(BoundedAP) {return 0;}
-            if(!BoundedAP) {return 1;}
-
-        default:
-            return state;
-    }
 };
 
 // Checks if the system reaches a stable state within the settling time
-int nextSettlingTime(int state, bool StableAP){
-    /*
-    never { Fsettling_time
-    T0_init:
+int nextSettlingTime(int state, std::map<APs, bool> AP){
+    /* never {  G(!ST | GSS) 
+    accept_init:
         if
-        :: (settling_time) -> goto accept_all
-        :: (!(settling_time)) -> goto T0_init
+        :: ((SS) && (ST)) -> goto accept_S0
+        :: (!(ST)) -> goto accept_init
+        :: ((!(SS)) && (ST)) -> goto T0_S2
         fi;
-    accept_all:
-        skip
+    accept_S0:
+        if
+        :: (SS) -> goto accept_S0
+        :: (!(SS)) -> goto T0_S2
+        fi;
+    T0_S2:
+        if
+        :: (true) -> goto T0_S2
+    fi;
+    }*/
+
+    __dios_trace_f("AP[settling time]: %x", AP[settling]); 
+    __dios_trace_f("AP[safe]: %x", AP[safe]);
+    switch(state) {
+        case -1:
+            return 1;
+        case 0:
+            __vm_ctl_flag(0, _VM_CF_Accepting);
+            if (AP[safe]) {return 0;}
+            if (!AP[safe]) {return 2;}
+
+        case 1:
+            // __vm_ctl_flag(0, _VM_CF_Accepting);
+            if (!AP[settling]) {return 1;}
+            if (AP[settling] && AP[safe]) {return 0;}
+            if (AP[settling] && !AP[safe]) {return 2;}
+            
+        case 2:
+            // __vm_ctl_flag(0, _VM_CF_Error);
+            return 2;
+
+        default:
+            return state;
     }
-    */
-   __dios_trace_f("Settling Time: %x", StableAP); 
-   switch(state) {
-    case -1:
-        return 1;
 
-    case 0:
-        __vm_ctl_flag(0, _VM_CF_Accepting);
-        if(StableAP) {return 0;}
-
-    case 1:
-        if(StableAP) {return 0;}
-        if(!StableAP) {return 1;}
-
-    default:
-        return state;
-   }
 };
+
+// int nextSettlingTime(int state, std::map<APs, bool> AP){
+//     /*
+//     never { Fsettling_time
+//     T0_init:
+//         if
+//         :: (settling_time) -> goto accept_all
+//         :: (!(settling_time)) -> goto T0_init
+//         fi;
+//     accept_all:
+//         skip
+//     }
+//     */
+//    __dios_trace_f("Settling Time: %x", AP[settling]); 
+//    switch(state) {
+//     case -1:
+//         return 1;
+
+//     case 0:
+//         __vm_ctl_flag(0, _VM_CF_Accepting);
+//         if(AP[settling]) {return 0;}
+
+//     case 1:
+//         if(AP[settling]) {return 0;}
+//         if(!AP[settling]) {return 1;}
+
+//     default:
+//         return state;
+//    }
+// };
+
+
+
+
+/* Function: next ====================================================
+ * 
+ * Abstract:
+ *   Sync the büchi automata (property) with the system
+ *   Property: <>([]safe)
+ *   Type: Liveness (execute with --liveness)  
+ */
+
+int nextStable( int state, std::map<APs, bool> AP ) {
+
+    __dios_trace_f("AP[safe]: %x", AP[safe]); 
+    switch ( state ) {
+        case -1:
+            return 0;
+        /*
+        T0_init:
+        if
+        :: (true) -> goto T0_init
+        :: (safe) -> goto accept_S1
+        fi;
+         */
+        case 0:
+            if (!AP[safe]) {return 0;}
+            if (AP[safe]) {return __vm_choose( 2 ) ? 0 : 1;}
+        /*
+        accept_S1:
+        if
+        :: (safe) -> goto accept_S1
+        :: (!(safe)) -> goto T0_S2
+        fi;
+        */
+        case 1:
+            __vm_ctl_flag( 0, _VM_CF_Accepting);
+            if (AP[safe]) {return 1;}
+            if (!AP[safe]) {return 2;}
+        /*
+        T0_S2:
+        if
+        :: (true) -> goto T0_S2
+        fi;
+        */
+        case 2:
+            return 2;
+        default:
+            return state;
+    }
+}
 
 
 /* Function: main =============================================================
@@ -571,18 +639,14 @@ int_T main(int_T argc, const char *argv[])
      * */
 
 
-    /*
-    * Initialize Observer thresholds epsilon, overshoot, rise level, rise time and settling time
-    */
-    MODEL_INSTANCE.ObserverFSM.initialThreshold(5.0, 10.0, 90.0, 1.5, 5.0);
-
     /* 
-     * Init states for model checking with Divine
-     * For each büchi automata an old and current state is needed
+     * States for model checking with Divine
+     * Four different states are needed for each büchi automaton
     */
+    int stateStable = -1, oldStateStable = 0;
+
     int stateRise = -1, oldStateRise = 0;
     int stateOvershoot = -1, oldStateOvershoot = 0;
-    int stateBounded = -1, oldStateBounded = 0;
     int stateSettlingTime = -1, oldStateSettlingTime = 0;
 
 
@@ -592,8 +656,9 @@ int_T main(int_T argc, const char *argv[])
         __dios_reschedule();
         oldStateRise = stateRise; 
         oldStateOvershoot = stateOvershoot;
-        oldStateBounded = stateBounded;
         oldStateSettlingTime = stateSettlingTime;
+
+        oldStateStable = stateStable;
 
 
         rtExtModePauseIfNeeded(rtmGetRTWExtModeInfo(MODEL_INSTANCE.getRTM()),
@@ -609,57 +674,26 @@ int_T main(int_T argc, const char *argv[])
         
         /*
         * 
-        * No need for to explicit call the observer transitions, because the observer is part of the model.
-        * Everytime the model does a step is "automatically" updates the observer. 
+        * No need for an extra call for the observer transitions, because the observer is part of the model.
+        * Everytime the model does a step is "automatically" updates the values. 
         * Therefore, rt_OneStep(...) also updates the Observer.
         * 
         */
         rt_OneStep(MODEL_INSTANCE);
         
         // Each Büchi automaton is updated 
-        stateRise = nextRise(stateRise, MODEL_INSTANCE.ObserverFSM.wasRiseVisited());
-        stateOvershoot = nextOvershoot(stateOvershoot, MODEL_INSTANCE.ObserverFSM.wasOvershootVisited());
-        stateBounded = nextBounded(stateBounded, MODEL_INSTANCE.ObserverFSM.wasBoundedVisited());
-        stateSettlingTime = nextSettlingTime(stateSettlingTime, MODEL_INSTANCE.ObserverFSM.wasRestVisited());
+        // stateRise = nextRise(stateRise, MODEL_INSTANCE.AP);
+        // stateOvershoot = nextOvershoot(stateOvershoot, MODEL_INSTANCE.AP);
+        stateSettlingTime = nextSettlingTime(stateSettlingTime, MODEL_INSTANCE.AP);
+
+        // stateStable = nextStable(stateStable, MODEL_INSTANCE.AP);
 
 
-        __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
-        __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
-        __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
-        __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
+        // __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
+         __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
+        // __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
 
-        /* // !!! Test !!!
-        * Choose which property to test, multiple simulaniously testin is not possible (i think) 
-        * Options:
-        * 1 = Rise
-        * 2 = Settle
-        * 3 = Overshoot
-        * 4 = Bounded 
-        * Default is Overshoot 
-        
-
-        string propertyToBeTested = 3;
-        
-        switch (propertyToBeTested)
-        {
-        case 1:
-            __dios_trace_f( "state rise: %d -> %d", oldStateRise, stateRise );
-            break;
-        case 2:
-            __dios_trace_f( "state stable: %d -> %d", oldStateSettlingTime, stateSettlingTime );
-            break;
-        case 3:
-            __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
-            break;
-        case 4:
-             __dios_trace_f( "state bounded: %d -> %d", oldStateBounded, stateBounded );
-             break;
-        default:
-            __dios_trace_f( "state overshoot: %d -> %d", oldStateOvershoot, stateOvershoot );
-            break;
-        }
-        */
-    
+        // __dios_trace_f( "state stability: %d -> %d", oldStateStable, stateStable);
     }
 
     /*******************************

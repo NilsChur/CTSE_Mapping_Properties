@@ -27,17 +27,17 @@ P_Velocity_Controlled_Vehicle_T Velocity_Controlled_VehicleModelClass::
   /* Expression: 1
    * Referenced by: '<Root>/Sine Wave'
    */
-  1.0,
+  2.0, // Amplitude
 
   /* Expression: 30
    * Referenced by: '<Root>/Sine Wave'
    */
-  30.0,
+  30.0, // Bias
 
   /* Expression: 0.2
    * Referenced by: '<Root>/Sine Wave'
    */
-  0.2,
+  0.2, // Frequency
 
   /* Computed Parameter: SineWave_Hsin
    * Referenced by: '<Root>/Sine Wave'

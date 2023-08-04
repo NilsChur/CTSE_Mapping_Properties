@@ -1,0 +1,41 @@
+states per second: 3050.58
+state count: 5247
+mips: 2.15226
+
+version: 4.4.2
+architecture: AMD Ryzen 7 5800X 8-Core Processor
+memory used: 530468
+physical memory used: 306072
+user time: 4.068174
+system time: 0.095972
+wall time: 4.123102
+
+cycle timers (search):
+  smt-f: { mcycles: 0, hits: 0, kc-avg: 0 }
+  smt-eq: { mcycles: 0, hits: 0, kc-avg: 0 }
+  divm: { mcycles: 5334, hits: 5247, kc-avg: 1016 }
+  hash: { mcycles: 748, hits: 5248, kc-avg: 142 }
+input file: ../Velocity_Controlled_Vehicle.bc
+compile options:
+  - ../Velocity_Controlled_Vehicle.bc
+input options:
+  sys.0: "nofail:malloc"
+  divine.bcname: "../Velocity_Controlled_Vehicle.bc"
+dios config: fair
+lamp config: ""
+static reduction: 1
+property type: liveness
+
+timers:
+  lart: 0.774
+  loader: 1.23
+  boot: 0.027
+  search: 1.72
+  ce: 0.023
+cycle timers (ce):
+  smt-f: { mcycles: 0, hits: 0, kc-avg: 0 }
+  smt-eq: { mcycles: 0, hits: 0, kc-avg: 0 }
+  divm: { mcycles: 0, hits: 0, kc-avg: 0 }
+  hash: { mcycles: 0, hits: 0, kc-avg: 0 }
+
+error found: no

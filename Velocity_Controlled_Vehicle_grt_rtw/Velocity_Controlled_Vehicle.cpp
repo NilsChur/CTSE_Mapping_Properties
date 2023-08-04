@@ -20,6 +20,8 @@
 
 #include "Velocity_Controlled_Vehicle.h"
 #include "Velocity_Controlled_Vehicle_private.h"
+#include "iostream"
+#include "cmath"
 
 /*
  * This function updates continuous states using the ODE3 fixed-step
@@ -193,17 +195,29 @@ void Velocity_Controlled_VehicleModelClass::step()
     * Could be passed to the Observer and can serve as guards */
     time_T timing = rtsiGetT(&(&Velocity_Controlled_Vehicle_M)->solverInfo);
     
-    /* 
-    *
-    * Pass values to the Observer
-    * The error of the system is captured by the variable:        rtb_e
-    * The reference is captrued by the variable:                  Velocity_Controlled_Vehicle_B.ref
-    * The output of the system is captured by the variable:       (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] + Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1])
-    * 
-    */
+    AP[rise] = ((Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] *
+       Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] +
+       Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] *
+       Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1]) >= 0.9 * Velocity_Controlled_Vehicle_B.ref && timing <= 0.7);
+    
+    AP[overshoot] = ((Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] *
+       Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] +
+       Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] *
+       Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1]) >= 1.1 * Velocity_Controlled_Vehicle_B.ref);
 
-    ObserverFSM.setExternalInput(Velocity_Controlled_Vehicle_B.ref, rtb_e, (Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] + Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] * Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1]), timing);
-    ObserverFSM.transition();
+    // AP[safe] = (rtb_e <= 0.05 && rtb_e >= -0.05);
+    AP[safe] = (fabs(rtb_e) <= 0.05*Velocity_Controlled_Vehicle_B.ref);
+
+    //AP[settling] = (rtb_e <= 0.05 && rtb_e >= -0.05 && timing <= 16.0 && timing >= 15.7 );
+    AP[settling] = (fabs(rtb_e) <= 0.05*Velocity_Controlled_Vehicle_B.ref && timing <= 2.0 && timing >= 1.9 );
+
+    // printf("Error: %d, Time: %d\n", (int)(100*rtb_e), (int)(10*timing));
+
+    // printf("SysOut: %d\n", (int)(100*(Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[0] *
+    //    Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[0] +
+    //    Velocity_Controlled_Vehicle_P.car_transfer_fcn_C[1] *
+    //    Velocity_Controlled_Vehicle_X.car_transfer_fcn_CSTATE[1])));
+
   }
 
 
@@ -417,7 +431,8 @@ Velocity_Controlled_VehicleModelClass::Velocity_Controlled_VehicleModelClass() :
   Velocity_Controlled_Vehicle_DW(),
   Velocity_Controlled_Vehicle_X(),
   Velocity_Controlled_Vehicle_M(),
-  ObserverFSM()
+  AP({{rise, false}, {overshoot, false}, {safe, false}, {settling, false}})
+  // AP({{safe, false}})
 {
   /* Currently there is no constructor body generated.*/
 }
