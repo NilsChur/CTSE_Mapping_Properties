@@ -1,0 +1,41 @@
+states per second: 3527.97
+state count: 8894
+mips: 2.26138
+
+version: 4.4.2
+architecture: AMD Ryzen 7 5800X 8-Core Processor
+memory used: 561588
+physical memory used: 353988
+user time: 4.928140
+system time: 0.050615
+wall time: 4.939377
+
+cycle timers (search):
+  smt-f: { mcycles: 0, hits: 0, kc-avg: 0 }
+  smt-eq: { mcycles: 0, hits: 0, kc-avg: 0 }
+  divm: { mcycles: 7813, hits: 8894, kc-avg: 878 }
+  hash: { mcycles: 1126, hits: 8895, kc-avg: 126 }
+input file: ../my_mpcACCsystem.bc
+compile options:
+  - ../my_mpcACCsystem.bc
+input options:
+  sys.0: "nofail:malloc"
+  divine.bcname: "../my_mpcACCsystem.bc"
+dios config: fair
+lamp config: ""
+static reduction: 1
+property type: liveness
+
+timers:
+  lart: 0.781
+  loader: 1.23
+  boot: 0.028
+  search: 2.52
+  ce: 0.024
+cycle timers (ce):
+  smt-f: { mcycles: 0, hits: 0, kc-avg: 0 }
+  smt-eq: { mcycles: 0, hits: 0, kc-avg: 0 }
+  divm: { mcycles: 0, hits: 0, kc-avg: 0 }
+  hash: { mcycles: 0, hits: 0, kc-avg: 0 }
+
+error found: no
